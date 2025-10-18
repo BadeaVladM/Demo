@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HealthTriage AI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindEase AI 🧠</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
@@ -16,9 +16,7 @@
     }
 
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      margin: 0; padding: 0; box-sizing: border-box;
     }
 
     body {
@@ -29,67 +27,100 @@
       transition: background-color 1s ease;
     }
 
-    /* ===== INTRO ===== */
-    #intro {
+    /* ===== GENERAL PAGE SECTIONS ===== */
+    section {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      padding: 80px 20px;
+      padding: 60px 20px;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-      animation: fadeInBG 1.5s ease forwards;
-    }
-
-    @keyframes fadeInBG {
-      from { background-color: #fff; }
-      to { background-color: var(--background); }
-    }
-
-    #intro::before {
-      content: "";
       position: absolute;
-      top: -100px;
-      left: -100px;
-      right: -100px;
-      bottom: -100px;
-      background: radial-gradient(circle at center, rgba(0,113,227,0.1), transparent 60%);
-      animation: glowMove 10s infinite alternate ease-in-out;
-      z-index: 0;
+      top: 0; left: 0; right: 0;
+      transition: all 1s ease;
+      opacity: 0;
+      transform: translateY(40px);
+      pointer-events: none;
     }
 
-    @keyframes glowMove {
-      0% { transform: translateY(0) scale(1); opacity: 0.7; }
-      100% { transform: translateY(-40px) scale(1.1); opacity: 1; }
+    section.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Page transitions */
+    .fade-in { animation: fadeIn 1s forwards; }
+    .slide-in { animation: slideIn 1s forwards; }
+    .zoom-in { animation: zoomIn 1s forwards; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(80px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ===== INTRO PAGE ===== */
+    #intro {
+      background: var(--background);
+    }
+
+    #intro .emoji {
+      font-size: 80px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
     }
 
     #intro h1 {
-      font-size: 54px;
+      font-size: 50px;
       font-weight: 600;
-      margin-bottom: 20px;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1.5s ease forwards;
-      animation-delay: 0.3s;
-      z-index: 1;
+      margin: 20px 0;
     }
 
     #intro p {
-      font-size: 20px;
-      color: #515154;
+      font-size: 18px;
+      color: #555;
       max-width: 600px;
+      margin-bottom: 30px;
       line-height: 1.6;
-      margin-bottom: 40px;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1.5s ease forwards;
-      animation-delay: 0.6s;
-      z-index: 1;
     }
 
-    #startBtn {
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input, select {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #d2d2d7;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.2);
+    }
+
+    .btn {
       background-color: var(--accent);
       color: white;
       padding: 14px 36px;
@@ -98,159 +129,49 @@
       font-weight: 500;
       text-decoration: none;
       transition: all 0.3s ease;
-      opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 1.5s ease forwards;
-      animation-delay: 0.9s;
-      z-index: 1;
+      cursor: pointer;
+      border: none;
     }
 
-    #startBtn:hover {
+    .btn:hover {
       background-color: #005bb5;
       box-shadow: 0 8px 24px rgba(0,113,227,0.25);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
 
-    #intro.hide {
-      opacity: 0;
-      transform: translateY(-50px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      pointer-events: none;
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* ===== NAV ===== */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(20px);
+    /* ===== CHAT PAGE ===== */
+    #chat {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 14px 30px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-      opacity: 0;
-      transition: opacity 0.6s ease;
-      z-index: 10;
-    }
-
-    nav.active {
-      opacity: 1;
-    }
-
-    nav h2 {
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    nav button {
-      background: none;
-      border: none;
-      font-size: 16px;
-      color: var(--accent);
-      cursor: pointer;
-    }
-
-    nav button:hover {
-      color: #005bb5;
-    }
-
-    /* ===== APP ===== */
-    #app {
-      display: none;
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      min-height: 100vh;
-      padding: 120px 20px 60px;
-    }
-
-    #app.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
+      background: linear-gradient(to bottom right, #f5f5f7, #eaf3ff);
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.9);
       backdrop-filter: blur(20px);
       padding: 40px;
       border-radius: var(--radius);
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       max-width: 650px;
-      margin: 0 auto;
-    }
-
-    .container h1 {
-      margin-bottom: 12px;
-      font-size: 28px;
-    }
-
-    .container p {
-      color: #515154;
-      margin-bottom: 25px;
-      font-size: 16px;
+      width: 90%;
     }
 
     textarea {
       width: 100%;
-      height: 140px;
+      height: 120px;
       padding: 14px;
-      font-size: 16px;
       border-radius: 12px;
-      border: 1px solid #d2d2d7;
-      resize: none;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-top: 20px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
     }
 
     textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
-    }
-
-    #submitBtn, #resetBtn {
-      width: 48%;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 15px;
-    }
-
-    #submitBtn {
-      background-color: var(--accent);
-      color: white;
-    }
-
-    #submitBtn:hover {
-      background-color: #005bb5;
-    }
-
-    #resetBtn {
-      background-color: #e8e8ed;
-      color: #1d1d1f;
-    }
-
-    #resetBtn:hover {
-      background-color: #d2d2d7;
-    }
-
-    .button-row {
-      display: flex;
-      justify-content: space-between;
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.2);
     }
 
     .chat-box {
@@ -265,142 +186,183 @@
       border: 1px solid #e3e3e8;
     }
 
-    .msg {
-      margin-bottom: 15px;
-      line-height: 1.5;
+    .msg { margin-bottom: 15px; line-height: 1.5; }
+    .msg.user { text-align: right; color: #0071e3; font-weight: 500; }
+    .msg.ai { color: #333; }
+
+    .nextBtn {
+      margin-top: 20px;
+      background-color: #00c060;
+    }
+    .nextBtn:hover {
+      background-color: #00a450;
     }
 
-    .msg.user {
-      text-align: right;
-      color: #0071e3;
-      font-weight: 500;
+    /* ===== RESOURCES PAGE ===== */
+    #resources {
+      background: linear-gradient(to bottom right, #eaf3ff, #f9f9fb);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px;
     }
 
-    .msg.ai {
-      color: #333;
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      width: 90%;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      padding: 25px;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover { transform: translateY(-5px); }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #555;
     }
 
     footer {
-      text-align: center;
-      padding: 40px 10px;
+      margin-top: 60px;
       font-size: 14px;
-      color: #86868b;
-      opacity: 0;
-      transition: opacity 0.8s ease;
+      color: #777;
     }
 
-    #app.active footer {
-      opacity: 1;
-    }
-
-    @media (max-width: 600px) {
-      h1 { font-size: 36px; }
-      .container { padding: 25px; }
-      .button-row { flex-direction: column; gap: 10px; }
-      #submitBtn, #resetBtn { width: 100%; }
+    @media(max-width:600px){
+      h1{font-size:36px;}
+      .container{padding:25px;}
     }
   </style>
 </head>
-
 <body>
-  <!-- INTRO -->
-  <section id="intro">
-    <h1>Bun venit la HealthTriage 🍏</h1>
-    <p>Analizează-ți simptomele rapid, sigur și elegant — cu ajutorul inteligenței artificiale.</p>
-    <a href="#" id="startBtn">Începe acum</a>
+
+  <!-- PAGE 1 -->
+  <section id="intro" class="active fade-in">
+    <div class="emoji">🧠</div>
+    <h1>Bun venit la MindEase</h1>
+    <p>Explorăm împreună echilibrul emoțional — calm, conștiență și grijă față de tine.</p>
+
+    <div class="input-row">
+      <input type="number" id="age" placeholder="Vârstă" min="10" max="99">
+      <select id="gender">
+        <option value="">Gen</option>
+        <option value="female">Femeie</option>
+        <option value="male">Bărbat</option>
+        <option value="other">Altul</option>
+      </select>
+    </div>
+
+    <button class="btn" id="toChat">Începe conversația</button>
   </section>
 
-  <!-- NAVBAR -->
-  <nav id="navbar">
-    <h2>HealthTriage AI</h2>
-    <button id="backBtn">Înapoi</button>
-  </nav>
-
-  <!-- APP -->
-  <section id="app">
+  <!-- PAGE 2 -->
+  <section id="chat">
     <div class="container">
-      <h1>Asistent medical AI</h1>
-      <p>Spune-ne ce simptome ai și AI-ul nostru îți va oferi o analiză orientativă, bazată pe date medicale.</p>
-
-      <textarea id="symptoms" placeholder="Ex: durere de cap, amețeli, greață..."></textarea>
-
+      <h1>Conversație cu MindEase 🤍</h1>
+      <p>Spune-mi ce simți acum. Sunt aici să te ascult fără judecată.</p>
+      <textarea id="feelings" placeholder="Ex: Mă simt copleșit, am anxietate, nu am energie..."></textarea>
       <div class="button-row">
-        <button id="submitBtn">Trimite</button>
-        <button id="resetBtn">Resetează</button>
+        <button class="btn" id="send">Trimite</button>
+        <button class="btn nextBtn" id="toResources">Resurse utile</button>
       </div>
-
       <div class="chat-box" id="chatBox">
-        <div class="msg ai">👋 Salut! Sunt asistentul tău AI. Spune-mi cum te simți.</div>
+        <div class="msg ai">👋 Salut! E în regulă să te simți așa. Cum te pot ajuta azi?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 3 -->
+  <section id="resources">
+    <h1>🌿 Resurse pentru echilibru interior</h1>
+    <p>Tehnici, exerciții și recomandări care pot aduce calmul înapoi.</p>
+
+    <div class="cards">
+      <div class="card">
+        <h3>🌬️ Respirație 4-7-8</h3>
+        <p>Inspiră 4 secunde, ține respirația 7 secunde, expiră 8. Repetă de 4 ori.</p>
+      </div>
+      <div class="card">
+        <h3>🎧 Sunete liniștitoare</h3>
+        <p><a href="https://www.youtube.com/watch?v=1ZYbU82GVz4" target="_blank">Ascultă ploaia calmă</a> pentru relaxare imediată.</p>
+      </div>
+      <div class="card">
+        <h3>🧘 Meditație ghidată</h3>
+        <p>Încearcă o sesiune de 5 minute pe <a href="https://www.headspace.com" target="_blank">Headspace</a> sau <a href="https://www.calm.com" target="_blank">Calm</a>.</p>
+      </div>
+      <div class="card">
+        <h3>💬 Suport real</h3>
+        <p>Dacă starea persistă, poți discuta anonim cu specialiști pe <a href="https://deprehub.ro/" target="_blank">DepreHub</a>.</p>
       </div>
     </div>
 
-    <footer>
-      ⚕️ <strong>Disclaimer:</strong> Acest instrument oferă o analiză generală bazată pe AI și nu înlocuiește un consult medical real.<br>
-      © 2025 HealthTriage Team — Creat cu 🩵 la Hackathon.
-    </footer>
+    <footer>© 2025 MindEase AI — creat cu grijă pentru echilibru mental 💙</footer>
   </section>
 
   <script>
-    const startBtn = document.getElementById("startBtn");
-    const intro = document.getElementById("intro");
-    const appSection = document.getElementById("app");
-    const nav = document.getElementById("navbar");
-    const backBtn = document.getElementById("backBtn");
-    const submitBtn = document.getElementById("submitBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const chatBox = document.getElementById("chatBox");
+    const intro = document.getElementById('intro');
+    const chat = document.getElementById('chat');
+    const resources = document.getElementById('resources');
+    const toChat = document.getElementById('toChat');
+    const toResources = document.getElementById('toResources');
+    const send = document.getElementById('send');
+    const chatBox = document.getElementById('chatBox');
 
-    // Tranziție elegantă
-    startBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      intro.classList.add("hide");
+    function showPage(from, to, animation) {
+      from.classList.remove('active');
+      to.classList.add('active', animation);
+      setTimeout(() => to.classList.remove(animation), 1000);
+    }
+
+    toChat.addEventListener('click', () => {
+      const age = document.getElementById('age').value.trim();
+      const gender = document.getElementById('gender').value;
+      if (!age || !gender) return alert('Completează vârsta și genul pentru o experiență personalizată 💫');
+      showPage(intro, chat, 'slide-in');
+    });
+
+    toResources.addEventListener('click', () => showPage(chat, resources, 'zoom-in'));
+
+    send.addEventListener('click', () => {
+      const txt = document.getElementById('feelings').value.trim();
+      if (!txt) return;
+      addMessage(txt, 'user');
+      document.getElementById('feelings').value = '';
       setTimeout(() => {
-        appSection.classList.add("active");
-        nav.classList.add("active");
+        const responses = [
+          "E important că îți exprimi emoțiile. E primul pas spre echilibru 💙",
+          "Poți lua o pauză de 5 minute să respiri și să te reconectezi 🌿",
+          "Te apreciez pentru că îți acorzi timp să reflectezi 🕊️",
+          "Uneori, tot ce ai nevoie este o clipă de liniște și acceptare 💫"
+        ];
+        typeAI(responses[Math.floor(Math.random() * responses.length)], chatBox);
       }, 800);
     });
 
-    // Înapoi
-    backBtn.addEventListener("click", () => {
-      appSection.classList.remove("active");
-      nav.classList.remove("active");
-      setTimeout(() => {
-        intro.classList.remove("hide");
-      }, 500);
-    });
-
-    // Trimite simptome
-    submitBtn.addEventListener("click", () => {
-      const textarea = document.getElementById("symptoms");
-      const text = textarea.value.trim();
-      if (!text) return;
-
-      addMessage(text, "user");
-      textarea.value = "";
-
-      // Simulare AI "typing"
-      setTimeout(() => {
-        typeAI("Analiză preliminară: simptomele tale pot indica o ușoară deshidratare sau stres. Recomandăm odihnă, hidratare și observarea evoluției simptomelor. Dacă persistă, consultă un medic.", chatBox);
-      }, 1000);
-    });
-
-    // Reset chat
-    resetBtn.addEventListener("click", () => {
-      chatBox.innerHTML = '<div class="msg ai">👋 Salut! Sunt asistentul tău AI. Spune-mi cum te simți.</div>';
-    });
-
-    // Funcții helper
     function addMessage(text, type) {
-      const msg = document.createElement("div");
-      msg.classList.add("msg", type);
+      const msg = document.createElement('div');
+      msg.classList.add('msg', type);
       msg.textContent = text;
       chatBox.appendChild(msg);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function typeAI(text, container) {
-      const msg = document.createElement("div");
-      msg.classList.add("msg", "ai");
+      const msg = document.createElement('div');
+      msg.classList.add('msg', 'ai');
       container.appendChild(msg);
       let i = 0;
       const interval = setInterval(() => {
