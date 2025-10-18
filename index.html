@@ -336,21 +336,28 @@
 
     toResources.addEventListener('click', () => showPage(chat, resources, 'zoom-in'));
 
-    send.addEventListener('click', () => {
-      const txt = document.getElementById('feelings').value.trim();
-      if (!txt) return;
-      addMessage(txt, 'user');
-      document.getElementById('feelings').value = '';
-      setTimeout(() => {
-        const responses = [
-          "E important că îți exprimi emoțiile. E primul pas spre echilibru 💙",
-          "Poți lua o pauză de 5 minute să respiri și să te reconectezi 🌿",
-          "Te apreciez pentru că îți acorzi timp să reflectezi 🕊️",
-          "Uneori, tot ce ai nevoie este o clipă de liniște și acceptare 💫"
-        ];
-        typeAI(responses[Math.floor(Math.random() * responses.length)], chatBox);
-      }, 800);
+    send.addEventListener('click', async () => {
+  const txt = document.getElementById('feelings').value.trim();
+  if (!txt) return;
+  addMessage(txt, 'user');
+  document.getElementById('feelings').value = '';
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: txt })
     });
+    const data = await res.json();
+    if (data.reply) {
+      typeAI(data.reply, chatBox);
+    } else {
+      typeAI("Eroare la server. Încearcă din nou 🕊️", chatBox);
+    }
+  } catch (err) {
+    typeAI("Nu pot contacta serverul. Verifică conexiunea 💭", chatBox);
+  }
+});
 
     function addMessage(text, type) {
       const msg = document.createElement('div');
