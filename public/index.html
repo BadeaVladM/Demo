@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>🌱 SmartSoil Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>🌿 SmartSoil</header>
+
+  <main>
+    <div class="gauges">
+      <div class="gauge-card">
+        <h3>Umiditate Sol</h3>
+        <canvas id="gaugeMoisture" width="150" height="150"></canvas>
+        <div class="gauge-value" id="moistureValue">--%</div>
+      </div>
+      <div class="gauge-card">
+        <h3>pH Sol</h3>
+        <canvas id="gaugePH" width="150" height="150"></canvas>
+        <div class="gauge-value" id="phValue">--</div>
+      </div>
+      <div class="gauge-card">
+        <h3>Temperatură Aer</h3>
+        <canvas id="gaugeTemp" width="150" height="150"></canvas>
+        <div class="gauge-value" id="tempValue">--°C</div>
+      </div>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <div id="plants" class="plants">
+      <h3>🌱 Plante recomandate:</h3>
+      <ul id="plantList"></ul>
+    </div>
+  </main>
+
+  <footer>
+    Hackathon 2025 • Echipa SmartSoil
+  </footer>
+
+<script>
+  // functie pentru crearea cadranelor
+  function createGauge(ctx, maxValue, color){
+    return new Chart(ctx, {
+      type:'doughnut',
+      data:{
+        labels:['Valoare','Rest'],
+        datasets:[{
+          data:[0,maxValue],
+          backgroundColor:[color,'rgba(0,0,0,0.1)'],
+          borderWidth:0,
+          cutout:'70%'
+        }]
+      },
+      options:{ responsive:false, plugins:{legend:{display:false}} }
+    });
+  }
+
+  // crearea cadranelor
+  const gaugeMoisture = createGauge(document.getElementById('gaugeMoisture').getContext('2d'),100,'#1b5e20');
+  const gaugePH = createGauge(document.getElementById('gaugePH').getContext('2d'),14,'#43a047');
+  const gaugeTemp = createGauge(document.getElementById('gaugeTemp').getContext('2d'),50,'#81c784');
+
+  // functie pentru actualizare dashboard
+  async function updateDashboard(){
+    try{
+      const res = await fetch('/api/values');
+      const data = await res.json();
+      const soil = parseFloat(data.soil);
+      const ph = parseFloat(data.ph);
+      const temp = parseFloat(data.temp);
+
+      // update cadrane
+      gaugeMoisture.data.datasets[0].data[0] = soil;
+      gaugeMoisture.data.datasets[0].data[1] = 100 - soil;
+      gaugeMoisture.update();
+
+      gaugePH.data.datasets[0].data[0] = ph;
+      gaugePH.data.datasets[0].data[1] = 14 - ph;
+      gaugePH.update();
+
+      gaugeTemp.data.datasets[0].data[0] = temp;
+      gaugeTemp.data.datasets[0].data[1] = 50 - temp;
+      gaugeTemp.update();
+
+      // valori numerice
+      document.getElementById('moistureValue').textContent = soil + '%';
+      document.getElementById('phValue').textContent = ph;
+      document.getElementById('tempValue').textContent = temp + '°C';
+
+      // alert
+      const alert = document.getElementById('alert');
+      if(soil<35) alert.textContent="⚠️ Sol prea uscat — udare recomandată";
+      else if(ph<5.8) alert.textContent="⚠️ Sol acid — aplică amendamente";
+      else if(temp>32) alert.textContent="⚠️ Temperatură ridicată — risc de stres";
+      else alert.textContent="✅ Condiții optime pentru cultură";
+
+      // plante recomandate
+      const plantList = document.getElementById('plantList');
+      plantList.innerHTML='';
+      let plants=[];
+      if(soil>=35 && ph>=6 && ph<=7 && temp<=32) plants=['Salată','Spanac','Roșii','Ardei','Morcovi'];
+      else if(soil<35) plants=['Cactus','Rozmarin','Sage','Busuioc rezistent la secetă'];
+      else if(temp>32) plants=['Tomate rezistente la căldură','Ardei gras','Pepene'];
+      else plants=['Pătrunjel','Ceapă verde','Frunze diverse'];
+
+      plants.forEach(p=>{
+        const li=document.createElement('li');
+        li.textContent=p;
+        plantList.appendChild(li);
+      });
+
+    } catch(err){
+      console.error('Eroare la preluarea datelor:', err);
+    }
+  }
+
+  setInterval(updateDashboard,2000);
+</script>
+</body>
+</html>
